@@ -9,14 +9,15 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   
+  /* Liberei a rolagem (overflow-x hidden para não vazar pros lados, mas permite descer) */
   body, html { 
-    height: 100%; font-family: 'Cormorant Garamond', serif;
-    background-color: #1a1a1a; overflow: hidden; color: #333;
+    min-height: 100%; font-family: 'Cormorant Garamond', serif;
+    background-color: #1a1a1a; overflow-x: hidden; color: #333;
   }
 
-  /* --- MURAL DE FUNDO (.jpeg) --- */
+  /* --- MURAL DE FUNDO (.jpeg) - Agora fixo na tela --- */
   .mural-background {
-    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
@@ -25,29 +26,14 @@
     transform: scale(1.05);
   }
 
-  @media (max-width: 768px) {
-    .mural-background {
-      grid-template-columns: repeat(2, 1fr);
-      grid-template-rows: repeat(3, 1fr);
-    }
-  }
-
-  .photo {
-    background-size: cover; background-position: center;
-    width: 100%; height: 100%;
-    /* Animação lenta de zoom automática no fundo */
-    animation: slowZoom 20s infinite alternate ease-in-out;
-  }
-  @keyframes slowZoom { from { transform: scale(1); } to { transform: scale(1.15); } }
-  
-  /* --- CHUVA DE PÉTALAS --- */
+  /* --- CHUVA DE PÉTALAS - Agora fixa na tela --- */
   #petals-container {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       pointer-events: none; z-index: 2; overflow: hidden;
   }
   .petal {
       position: absolute; top: -50px;
-      background-color: rgba(255, 192, 203, 0.6); /* Cor rosa suave */
+      background-color: rgba(255, 192, 203, 0.6);
       border-radius: 150% 0 150% 0;
       animation: fall linear infinite;
   }
@@ -58,10 +44,11 @@
       100% { opacity: 0; transform: translateY(110vh) rotate(360deg) translateX(50px); }
   }
 
-  /* --- CONTAINER PRINCIPAL --- */
+  /* --- CONTAINER PRINCIPAL - Permite crescer se precisar --- */
   .container {
     position: relative; z-index: 10; display: flex; 
-    justify-content: center; align-items: center; height: 100vh; padding: 20px;
+    justify-content: center; align-items: center; 
+    min-height: 100vh; padding: 20px;
   }
 
   /* --- ESTILO DA CARTA --- */
@@ -74,6 +61,7 @@
     text-align: center; 
     box-shadow: 0 15px 35px rgba(0,0,0,0.5);
     position: relative;
+    margin: 20px 0; /* Espaço em cima e embaixo para quem rolar a tela */
   }
   
   .letter-header-icon {
@@ -88,17 +76,14 @@
     font-family: 'Great Vibes', cursive;
     font-size: 2.8rem; color: #c2a878; margin-bottom: 20px; font-weight: normal;
   }
-  
   p {
     font-size: 1.25rem; line-height: 1.7; color: #555; margin-bottom: 15px;
   }
-
   .highlight-date {
     font-size: 1.4rem; font-weight: 600; color: #333; margin: 25px 0;
     border-top: 1px solid #c2a878; border-bottom: 1px solid #c2a878;
     padding: 15px 0; display: inline-block;
   }
-  
   .names {
     font-family: 'Great Vibes', cursive; font-size: 2.2rem; color: #c2a878; margin-top: 30px; margin-bottom: 10px;
   }
@@ -116,24 +101,33 @@
   /* --- ANIMAÇÕES DE TRANSIÇÃO --- */
   .intro-content { transition: opacity 0.5s ease; }
   .message-content { display: none; }
-
   .show-message .intro-content { display: none; }
   .show-message .message-content { display: block; }
 
-  /* Animação sequencial dos textos */
   .fade-in-up {
       opacity: 0; transform: translateY(20px);
       animation: fadeInUp ease-out 0.8s forwards;
   }
-  /* Delay para cada elemento aparecer um depois do outro */
   .delay-1 { animation-delay: 0.1s; }
   .delay-2 { animation-delay: 0.4s; }
   .delay-3 { animation-delay: 0.7s; }
   .delay-4 { animation-delay: 1.0s; }
   .delay-5 { animation-delay: 1.3s; }
 
-  @keyframes fadeInUp {
-      to { opacity: 1; transform: translateY(0); }
+  @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+  /* --- AJUSTES ESPECÍFICOS PARA CELULARES --- */
+  @media (max-width: 768px) {
+    .mural-background {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+    }
+    .letter-card {
+      padding: 30px 20px; /* Diminui o espaço interno pra caber mais texto */
+    }
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 2.4rem; }
+    p { font-size: 1.15rem; }
   }
 </style>
 </head>
@@ -144,12 +138,12 @@
 </audio>
 
 <div class="mural-background">
-  <div class="photo" style="background-image: url('1.jpeg'); animation-delay: 0s;"></div>
-  <div class="photo" style="background-image: url('2.jpeg'); animation-delay: 2s;"></div>
-  <div class="photo" style="background-image: url('3.jpeg'); animation-delay: 4s;"></div>
-  <div class="photo" style="background-image: url('4.jpeg'); animation-delay: 6s;"></div>
-  <div class="photo" style="background-image: url('5.jpeg'); animation-delay: 8s;"></div>
-  <div class="photo" style="background-image: url('6.jpeg'); animation-delay: 10s;"></div>
+  <div class="photo" style="background-image: url('1.jpeg'); animation: slowZoom 20s infinite alternate ease-in-out; animation-delay: 0s; background-size: cover; background-position: center;"></div>
+  <div class="photo" style="background-image: url('2.jpeg'); animation: slowZoom 20s infinite alternate ease-in-out; animation-delay: 2s; background-size: cover; background-position: center;"></div>
+  <div class="photo" style="background-image: url('3.jpeg'); animation: slowZoom 20s infinite alternate ease-in-out; animation-delay: 4s; background-size: cover; background-position: center;"></div>
+  <div class="photo" style="background-image: url('4.jpeg'); animation: slowZoom 20s infinite alternate ease-in-out; animation-delay: 6s; background-size: cover; background-position: center;"></div>
+  <div class="photo" style="background-image: url('5.jpeg'); animation: slowZoom 20s infinite alternate ease-in-out; animation-delay: 8s; background-size: cover; background-position: center;"></div>
+  <div class="photo" style="background-image: url('6.jpeg'); animation: slowZoom 20s infinite alternate ease-in-out; animation-delay: 10s; background-size: cover; background-position: center;"></div>
 </div>
 
 <div id="petals-container"></div>
@@ -160,9 +154,7 @@
     <div class="intro-content" id="intro">
       <div class="letter-header-icon">
         <svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#c2a878" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="9" cy="12" r="5"></circle>
-          <circle cx="15" cy="12" r="5"></circle>
-          <path d="M8 7 L9 5 L10 7 Z" fill="#c2a878"></path>
+          <circle cx="9" cy="12" r="5"></circle><circle cx="15" cy="12" r="5"></circle><path d="M8 7 L9 5 L10 7 Z" fill="#c2a878"></path>
         </svg>
       </div>
       <h1>Temos uma novidade para vocês...</h1>
@@ -172,25 +164,24 @@
     <div class="message-content" id="message">
        <div class="letter-header-icon fade-in-up delay-1" style="margin-bottom: 10px;">
         <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#c2a878" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="9" cy="12" r="5"></circle>
-          <circle cx="15" cy="12" r="5"></circle>
-          <path d="M8 7 L9 5 L10 7 Z" fill="#c2a878"></path>
+          <circle cx="9" cy="12" r="5"></circle><circle cx="15" cy="12" r="5"></circle><path d="M8 7 L9 5 L10 7 Z" fill="#c2a878"></path>
         </svg>
       </div>
       <h2 class="fade-in-up delay-1">O Nosso Casamento</h2>
       <p class="fade-in-up delay-2">A nossa história de amor está prestes a ganhar o seu capítulo mais importante. Decidimos unir nossas vidas e o nosso coração se enche de alegria.</p>
       <p class="fade-in-up delay-3">Essa celebração não faria sentido sem as pessoas que marcam a nossa caminhada. Por isso, queremos muito que vocês estejam lá para celebrar com a gente!</p>
-      
       <div class="highlight-date fade-in-up delay-4">Reserve a data: 5 de junho</div>
-      
       <div class="names fade-in-up delay-5">Com amor,<br>Mayke e Ana Luiza</div>
     </div>
 
   </div>
 </div>
 
+<style>
+  @keyframes slowZoom { from { transform: scale(1); } to { transform: scale(1.15); } }
+</style>
+
 <script>
-  // Função para abrir o convite e tocar música
   function revelarConvite() {
     const card = document.getElementById('card');
     const music = document.getElementById('bg-music');
@@ -199,37 +190,20 @@
     music.play().catch(error => console.log("Erro de áudio:", error));
   }
 
-  // --- SCRIPT DA CHUVA DE PÉTALAS ---
   const petalsContainer = document.getElementById('petals-container');
-  
   function createPetal() {
       const petal = document.createElement('div');
       petal.classList.add('petal');
-      
-      // Tamanho aleatório
-      const size = Math.random() * 15 + 10; + 'px';
+      const size = Math.random() * 15 + 10;
       petal.style.width = size + 'px';
       petal.style.height = size + 'px';
-      
-      // Posição inicial aleatória na largura da tela
       petal.style.left = Math.random() * 100 + 'vw';
-      
-      // Duração da queda aleatória (entre 5s e 12s)
       const duration = Math.random() * 7 + 5;
       petal.style.animationDuration = duration + 's';
-      
-      // Atraso aleatório para começar
       petal.style.animationDelay = Math.random() * 5 + 's';
-
       petalsContainer.appendChild(petal);
-      
-      // Remove a pétala depois que ela cai para não pesar o site
-      setTimeout(() => {
-          petal.remove();
-      }, (duration + 5) * 1000);
+      setTimeout(() => { petal.remove(); }, (duration + 5) * 1000);
   }
-
-  // Cria uma nova pétala a cada 400 milissegundos
   setInterval(createPetal, 400);
 </script>
 
